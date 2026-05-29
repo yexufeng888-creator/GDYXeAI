@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图书馆 · Campus Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100;300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--white:#f5f5f7;--black:#000;--blue:#0071e3;--blue-light:#2997ff;--purple:#bf5af2;--teal:#32d74b;--orange:#ff9f0a;--pink:#ff375f;--glass:rgba(255,255,255,0.06);--glass-border:rgba(255,255,255,0.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{background:#000;color:var(--white);font-family:'Noto Sans SC',-apple-system,sans-serif;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;height:52px;background:rgba(0,0,0,0.72);backdrop-filter:blur(40px) saturate(200%);-webkit-backdrop-filter:blur(40px) saturate(200%);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;padding:0 28px;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;letter-spacing:-0.5px;background:linear-gradient(135deg,#fff 0%,#a0c4ff 60%,#bf5af2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:300;letter-spacing:0.3px;transition:color .2s;}
+.nav-links a:hover{color:#fff;}
+.nav-links a.active{color:var(--blue-light);}
+
+/* HERO */
+.hero{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:140px 24px 70px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;z-index:0;}
+.hero-bg::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(41,151,255,0.25) 0%,transparent 70%);top:-150px;left:50%;transform:translateX(-50%);filter:blur(80px);animation:pulse-glow 6s ease-in-out infinite alternate;}
+.hero-bg::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(50,215,75,0.18) 0%,transparent 70%);bottom:0;right:10%;filter:blur(60px);animation:pulse-glow 8s ease-in-out infinite alternate-reverse;}
+@keyframes pulse-glow{0%{opacity:.6;transform:translateX(-50%) scale(1);}100%{opacity:1;transform:translateX(-50%) scale(1.15);}}
+.hero-eyebrow{font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--blue-light);font-weight:300;margin-bottom:20px;position:relative;z-index:1;}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(48px,8vw,96px);font-weight:700;line-height:1.05;letter-spacing:-2px;background:linear-gradient(160deg,#ffffff 0%,#c8e0ff 45%,#32d74b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative;z-index:1;}
+.hero-sub{font-size:clamp(16px,2vw,20px);font-weight:300;color:rgba(255,255,255,0.6);margin-top:20px;max-width:600px;line-height:1.7;position:relative;z-index:1;}
+
+/* STAT BAR */
+.stat-bar{display:flex;gap:40px;margin-top:40px;position:relative;z-index:1;flex-wrap:wrap;justify-content:center;}
+.stat-item{text-align:center;}
+.stat-num{font-size:32px;font-weight:700;font-family:'Playfair Display',serif;background:linear-gradient(135deg,#2997ff,#32d74b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-label{font-size:12px;color:rgba(255,255,255,0.45);font-weight:300;letter-spacing:1px;margin-top:4px;}
+
+/* SECTIONS */
+section{padding:90px 24px;}
+.section-inner{max-width:1140px;margin:0 auto;}
+.section-label{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--blue-light);font-weight:400;margin-bottom:16px;text-align:center;}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,52px);font-weight:700;line-height:1.1;letter-spacing:-1px;color:#fff;text-align:center;margin-bottom:14px;}
+.section-title span{background:linear-gradient(120deg,#2997ff,#32d74b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.section-desc{font-size:16px;font-weight:300;color:rgba(255,255,255,0.5);text-align:center;max-width:600px;margin:0 auto 50px;line-height:1.7;}
+
+/* SEARCH + FILTER */
+.lib-toolbar{display:flex;flex-direction:column;gap:20px;margin-bottom:44px;align-items:center;}
+.search-wrap{position:relative;width:100%;max-width:560px;}
+.search-input{width:100%;padding:16px 24px 16px 52px;border-radius:16px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);color:#fff;font-size:15px;font-family:inherit;outline:none;transition:border-color .3s,box-shadow .3s;}
+.search-input::placeholder{color:rgba(255,255,255,0.35);}
+.search-input:focus{border-color:rgba(41,151,255,0.5);box-shadow:0 0 30px rgba(41,151,255,0.1);}
+.search-icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.5;}
+.filter-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.chip{padding:8px 18px;border-radius:100px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.6);font-size:13px;font-family:inherit;cursor:pointer;transition:all .25s;backdrop-filter:blur(12px);}
+.chip:hover{border-color:rgba(41,151,255,0.4);color:#fff;}
+.chip.active{background:linear-gradient(120deg,rgba(41,151,255,0.25),rgba(50,215,75,0.2));border-color:rgba(41,151,255,0.5);color:#fff;}
+
+/* BOOK GRID */
+.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;}
+.book-card{position:relative;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);overflow:hidden;transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .4s,box-shadow .4s;display:flex;flex-direction:column;}
+.book-card::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(41,151,255,0.1) 0%,transparent 50%);opacity:0;transition:opacity .4s;pointer-events:none;}
+.book-card:hover{transform:translateY(-6px);border-color:rgba(41,151,255,0.3);box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 40px rgba(41,151,255,0.06);}
+.book-card:hover::after{opacity:1;}
+.book-cover{height:180px;display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;overflow:hidden;}
+.book-cover::before{content:'';position:absolute;inset:0;opacity:0.9;}
+.book-info{padding:18px;display:flex;flex-direction:column;flex:1;}
+.book-cat{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--blue-light);font-weight:400;margin-bottom:6px;}
+.book-title{font-size:16px;font-weight:600;color:#fff;line-height:1.3;margin-bottom:4px;}
+.book-author{font-size:13px;font-weight:300;color:rgba(255,255,255,0.45);margin-bottom:14px;}
+.book-meta{display:flex;justify-content:space-between;align-items:center;margin-top:auto;}
+.book-status{font-size:12px;font-weight:400;display:flex;align-items:center;gap:5px;}
+.book-status.available{color:var(--teal);}
+.book-status.borrowed{color:var(--orange);}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.btn-borrow{padding:7px 16px;border-radius:100px;border:none;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;transition:all .25s;background:linear-gradient(120deg,#0071e3,#2997ff);color:#fff;}
+.btn-borrow:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(41,151,255,0.3);}
+.btn-borrow:disabled{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* FOOTER */
+footer{padding:60px 24px 40px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;}
+.footer-text{font-size:13px;color:rgba(255,255,255,0.3);font-weight:300;}
+.footer-text a{color:var(--blue-light);text-decoration:none;}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* SEAT BOOKING */
+.seat-section{background:linear-gradient(180deg,transparent,rgba(255,255,255,0.015),transparent);}
+.booking-controls{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:36px;}
+.ctrl-group{display:flex;flex-direction:column;gap:8px;}
+.ctrl-label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:400;padding-left:4px;}
+.ctrl-select{padding:11px 20px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);color:#fff;font-size:14px;font-family:inherit;outline:none;cursor:pointer;transition:border-color .3s;min-width:150px;}
+.ctrl-select:focus{border-color:rgba(41,151,255,0.5);}
+.ctrl-select option{background:#1a1a1c;color:#fff;}
+
+.floor-plan{max-width:780px;margin:0 auto;border-radius:24px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);padding:36px;position:relative;}
+.floor-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.floor-name{font-size:18px;font-weight:600;color:#fff;display:flex;align-items:center;gap:10px;}
+.legend{display:flex;gap:18px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:rgba(255,255,255,0.55);font-weight:300;}
+.legend-box{width:16px;height:16px;border-radius:5px;}
+.lg-free{background:rgba(50,215,75,0.25);border:1px solid rgba(50,215,75,0.5);}
+.lg-occupied{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);}
+.lg-reserved{background:rgba(41,151,255,0.3);border:1px solid rgba(41,151,255,0.6);}
+.lg-mine{background:linear-gradient(120deg,rgba(191,90,242,0.4),rgba(255,55,95,0.35));border:1px solid rgba(191,90,242,0.7);}
+
+.zone-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:8px 0 14px;text-align:center;}
+.seat-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:12px;margin-bottom:26px;}
+.seat{aspect-ratio:1;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;cursor:pointer;transition:all .25s;border:1px solid transparent;position:relative;user-select:none;}
+.seat.free{background:rgba(50,215,75,0.12);border-color:rgba(50,215,75,0.35);color:rgba(50,215,75,0.9);}
+.seat.free:hover{background:rgba(50,215,75,0.25);transform:scale(1.08);box-shadow:0 4px 16px rgba(50,215,75,0.2);}
+.seat.occupied{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.2);cursor:not-allowed;}
+.seat.reserved{background:rgba(41,151,255,0.18);border-color:rgba(41,151,255,0.4);color:rgba(41,151,255,0.8);cursor:not-allowed;}
+.seat.mine{background:linear-gradient(120deg,rgba(191,90,242,0.35),rgba(255,55,95,0.3));border-color:rgba(191,90,242,0.6);color:#fff;}
+.seat.selected{background:linear-gradient(120deg,#0071e3,#2997ff);border-color:#2997ff;color:#fff;transform:scale(1.1);box-shadow:0 6px 22px rgba(41,151,255,0.45);}
+.aisle{height:14px;}
+.book-seat-btn{display:block;width:100%;max-width:280px;margin:8px auto 0;padding:14px;border-radius:14px;border:none;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;background:linear-gradient(120deg,#bf5af2,#ff375f);color:#fff;transition:all .3s;}
+.book-seat-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(191,90,242,0.35);}
+.book-seat-btn:disabled{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* MY BORROW LIST */
+.borrow-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;}
+.borrow-item{display:flex;gap:16px;padding:18px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(16px);align-items:center;}
+.borrow-cover{width:48px;height:64px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.borrow-detail{flex:1;min-width:0;}
+.borrow-title{font-size:15px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.borrow-due{font-size:12px;color:rgba(255,255,255,0.45);font-weight:300;margin-top:3px;}
+.btn-return{padding:6px 14px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.7);font-family:inherit;font-size:12px;cursor:pointer;transition:all .25s;}
+.btn-return:hover{border-color:var(--pink);color:var(--pink);}
+.empty-state{text-align:center;padding:50px 20px;color:rgba(255,255,255,0.3);font-weight:300;}
+.empty-state .ei{font-size:42px;margin-bottom:14px;opacity:.5;}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:rgba(20,20,22,0.9);backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px 26px;font-size:14px;color:#fff;z-index:2000;opacity:0;transition:all .4s cubic-bezier(.2,.8,.2,1);display:flex;align-items:center;gap:10px;box-shadow:0 12px 40px rgba(0,0,0,0.5);}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.success{border-color:rgba(50,215,75,0.4);}
+.toast.error{border-color:rgba(255,55,95,0.4);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);z-index:1500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;padding:20px;}
+.modal-overlay.show{opacity:1;pointer-events:all;}
+.modal{background:rgba(24,24,27,0.85);backdrop-filter:blur(40px);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:36px;max-width:420px;width:100%;transform:scale(0.9);transition:transform .3s cubic-bezier(.2,.8,.2,1);text-align:center;}
+.modal-overlay.show .modal{transform:scale(1);}
+.modal-icon{font-size:48px;margin-bottom:16px;}
+.modal-title{font-size:22px;font-weight:600;color:#fff;margin-bottom:10px;font-family:'Playfair Display',serif;}
+.modal-text{font-size:14px;font-weight:300;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:26px;}
+.modal-text strong{color:var(--blue-light);font-weight:500;}
+.modal-btns{display:flex;gap:12px;}
+.modal-btn{flex:1;padding:13px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all .25s;}
+.modal-btn.primary{background:linear-gradient(120deg,#0071e3,#2997ff);color:#fff;}
+.modal-btn.primary:hover{transform:scale(1.03);}
+.modal-btn.ghost{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);}
+.modal-btn.ghost:hover{background:rgba(255,255,255,0.1);}
+
+@media(max-width:768px){.nav-links{display:none;}.seat-grid{grid-template-columns:repeat(6,1fr);gap:8px;}.book-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}.floor-plan{padding:22px 16px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index (1).html" class="nav-logo">Campus Intelligence</a>
+  <ul class="nav-links">
+    <li><a href="index (1).html">首页</a></li>
+    <li><a href="guide.html">使用指南</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li><a href="library.html" class="active">图书馆</a></li>
+    <li><a href="academics.html">学术活动</a></li>
+    <li><a href="mentors.html">导师团队</a></li>
+  </ul>
+  <a href="index (1).html" style="font-size:13px;color:var(--blue-light);text-decoration:none;">← 返回首页</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-eyebrow">Smart Library</div>
+  <h1 class="hero-title">智慧图书馆</h1>
+  <p class="hero-sub">查阅馆藏书籍、在线借阅、预约自习室座位。一站式数字图书馆体验，让学习触手可及。</p>
+  <div class="stat-bar">
+    <div class="stat-item"><div class="stat-num" id="statBooks">0</div><div class="stat-label">馆藏书籍</div></div>
+    <div class="stat-item"><div class="stat-num" id="statSeats">0</div><div class="stat-label">空闲座位</div></div>
+    <div class="stat-item"><div class="stat-num" id="statBorrowed">0</div><div class="stat-label">我的借阅</div></div>
+  </div>
+</section>
+
+<!-- BOOK SEARCH & BORROW -->
+<section id="books">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Collection</div>
+      <h2 class="section-title">书籍<span>查阅与借阅</span></h2>
+      <p class="section-desc">搜索馆藏书籍，按分类筛选，在线一键借阅。借阅期限 30 天，可在线续借。</p>
+    </div>
+    <div class="lib-toolbar reveal">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="搜索书名、作者或关键词…" id="bookSearch" oninput="renderBooks()">
+      </div>
+      <div class="filter-chips" id="catChips">
+        <button class="chip active" data-cat="all" onclick="setCat('all')">全部</button>
+        <button class="chip" data-cat="计算机" onclick="setCat('计算机')">计算机</button>
+        <button class="chip" data-cat="文学" onclick="setCat('文学')">文学</button>
+        <button class="chip" data-cat="科学" onclick="setCat('科学')">科学</button>
+        <button class="chip" data-cat="艺术" onclick="setCat('艺术')">艺术</button>
+        <button class="chip" data-cat="经管" onclick="setCat('经管')">经管</button>
+        <button class="chip" data-cat="历史" onclick="setCat('历史')">历史</button>
+      </div>
+    </div>
+    <div class="book-grid reveal" id="bookGrid"></div>
+  </div>
+</section>
+
+<!-- SEAT BOOKING -->
+<section class="seat-section" id="seats">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Study Room</div>
+      <h2 class="section-title">自习室<span>座位预约</span></h2>
+      <p class="section-desc">选择楼层与时间段，在可视化座位图上挑选心仪座位。绿色为空闲，蓝色为已预约。</p>
+    </div>
+    <div class="booking-controls reveal">
+      <div class="ctrl-group">
+        <span class="ctrl-label">楼层 / 区域</span>
+        <select class="ctrl-select" id="floorSelect" onchange="renderSeats()">
+          <option value="2F·静音区">2F · 静音自习区</option>
+          <option value="3F·研讨区">3F · 小组研讨区</option>
+          <option value="4F·电子阅览">4F · 电子阅览区</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label">日期</span>
+        <select class="ctrl-select" id="dateSelect" onchange="renderSeats()">
+          <option value="今天">今天</option>
+          <option value="明天">明天</option>
+          <option value="后天">后天</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label">时间段</span>
+        <select class="ctrl-select" id="timeSelect" onchange="renderSeats()">
+          <option value="08:00-12:00">上午 08:00 - 12:00</option>
+          <option value="13:00-17:00">下午 13:00 - 17:00</option>
+          <option value="18:00-22:00">晚间 18:00 - 22:00</option>
+        </select>
+      </div>
+    </div>
+    <div class="floor-plan reveal">
+      <div class="floor-head">
+        <div class="floor-name"><span id="floorIcon">🤫</span> <span id="floorTitle">2F · 静音自习区</span></div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-box lg-free"></span>空闲</div>
+          <div class="legend-item"><span class="legend-box lg-occupied"></span>已占用</div>
+          <div class="legend-item"><span class="legend-box lg-reserved"></span>已预约</div>
+          <div class="legend-item"><span class="legend-box lg-mine"></span>我的座位</div>
+        </div>
+      </div>
+      <div class="zone-label">⬛ 入口 · 靠窗座位在上方 ⬛</div>
+      <div class="seat-grid" id="seatGrid"></div>
+      <button class="book-seat-btn" id="bookSeatBtn" disabled onclick="confirmSeat()">请先选择一个座位</button>
+    </div>
+  </div>
+</section>
+
+<!-- MY BORROW & RESERVATIONS -->
+<section id="mine">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">My Account</div>
+      <h2 class="section-title">我的<span>借阅与预约</span></h2>
+      <p class="section-desc">管理你的借阅书籍和座位预约，随时查看到期提醒。</p>
+    </div>
+    <div class="reveal" style="margin-bottom:40px;">
+      <h3 style="font-size:18px;font-weight:500;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:8px;">📖 借阅中的书籍</h3>
+      <div class="borrow-list" id="borrowList"></div>
+    </div>
+    <div class="reveal">
+      <h3 style="font-size:18px;font-weight:500;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:8px;">💺 座位预约</h3>
+      <div class="borrow-list" id="seatResList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-text">
+    <a href="index (1).html">Campus Intelligence</a> · 大连工业大学艺术与信息工程学院<br>
+    <span style="margin-top:8px;display:inline-block;">© 2026 保留所有权利 · <a href="privacy.html">隐私政策</a> · <a href="faq.html">常见问题</a></span>
+  </p>
+</footer>
+
+<!-- TOAST & MODAL -->
+<div class="toast" id="toast"><span id="toastIcon">✅</span><span id="toastMsg"></span></div>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-icon" id="modalIcon">📚</div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-text" id="modalText"></div>
+    <div class="modal-btns">
+      <button class="modal-btn ghost" onclick="closeModal()">取消</button>
+      <button class="modal-btn primary" id="modalConfirm">确认</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== 数据 ==========
+const BOOKS = [
+  {id:1,title:'深入理解计算机系统',author:'Randal E. Bryant',cat:'计算机',icon:'💻',g:'linear-gradient(135deg,#0071e3,#2997ff)'},
+  {id:2,title:'算法导论',author:'Thomas H. Cormen',cat:'计算机',icon:'🧮',g:'linear-gradient(135deg,#5e5ce6,#2997ff)'},
+  {id:3,title:'代码整洁之道',author:'Robert C. Martin',cat:'计算机',icon:'⌨️',g:'linear-gradient(135deg,#32d74b,#0071e3)'},
+  {id:4,title:'人工智能：现代方法',author:'Stuart Russell',cat:'计算机',icon:'🤖',g:'linear-gradient(135deg,#bf5af2,#2997ff)'},
+  {id:5,title:'百年孤独',author:'加西亚·马尔克斯',cat:'文学',icon:'📖',g:'linear-gradient(135deg,#ff9f0a,#ff375f)'},
+  {id:6,title:'活着',author:'余华',cat:'文学',icon:'🌾',g:'linear-gradient(135deg,#ff375f,#bf5af2)'},
+  {id:7,title:'红楼梦',author:'曹雪芹',cat:'文学',icon:'🏮',g:'linear-gradient(135deg,#ff453a,#ff9f0a)'},
+  {id:8,title:'时间简史',author:'史蒂芬·霍金',cat:'科学',icon:'🌌',g:'linear-gradient(135deg,#5e5ce6,#bf5af2)'},
+  {id:9,title:'自私的基因',author:'理查德·道金斯',cat:'科学',icon:'🧬',g:'linear-gradient(135deg,#32d74b,#64d2ff)'},
+  {id:10,title:'万物简史',author:'比尔·布莱森',cat:'科学',icon:'🔬',g:'linear-gradient(135deg,#64d2ff,#0071e3)'},
+  {id:11,title:'艺术的故事',author:'贡布里希',cat:'艺术',icon:'🎨',g:'linear-gradient(135deg,#ff9f0a,#ff375f)'},
+  {id:12,title:'设计中的设计',author:'原研哉',cat:'艺术',icon:'✏️',g:'linear-gradient(135deg,#8e8e93,#2997ff)'},
+  {id:13,title:'国富论',author:'亚当·斯密',cat:'经管',icon:'💰',g:'linear-gradient(135deg,#ffd60a,#ff9f0a)'},
+  {id:14,title:'穷查理宝典',author:'查理·芒格',cat:'经管',icon:'📈',g:'linear-gradient(135deg,#32d74b,#ffd60a)'},
+  {id:15,title:'人类简史',author:'尤瓦尔·赫拉利',cat:'历史',icon:'🗿',g:'linear-gradient(135deg,#ff9f0a,#bf5af2)'},
+  {id:16,title:'明朝那些事儿',author:'当年明月',cat:'历史',icon:'🏯',g:'linear-gradient(135deg,#ff453a,#5e5ce6)'},
+];
+
+// ========== 状态（localStorage 持久化）==========
+const LS = {
+  get:(k,d)=>{try{return JSON.parse(localStorage.getItem('lib_'+k))??d}catch{return d}},
+  set:(k,v)=>localStorage.setItem('lib_'+k,JSON.stringify(v))
+};
+let borrowed = LS.get('borrowed',[]);      // [{id,title,icon,g,due}]
+let seatRes = LS.get('seatRes',[]);        // [{floor,date,time,seat}]
+let curCat = 'all';
+let selectedSeat = null;
+
+// 座位占用情况随机生成（同一楼层+日期+时间段确定性）
+function seatStateFor(floor,date,time,idx){
+  const seed = (floor+date+time).split('').reduce((a,c)=>a+c.charCodeAt(0),0)+idx*7;
+  const r = (Math.sin(seed)*10000)%1;
+  const v = Math.abs(r);
+  if(v<0.32) return 'occupied';
+  if(v<0.45) return 'reserved';
+  return 'free';
+}
+
+// ========== 书籍渲染 ==========
+function setCat(c){
+  curCat=c;
+  document.querySelectorAll('#catChips .chip').forEach(ch=>ch.classList.toggle('active',ch.dataset.cat===c));
+  renderBooks();
+}
+function isBorrowed(id){return borrowed.some(b=>b.id===id);}
+function renderBooks(){
+  const q=(document.getElementById('bookSearch').value||'').toLowerCase().trim();
+  const grid=document.getElementById('bookGrid');
+  const list=BOOKS.filter(b=>{
+    const matchCat=curCat==='all'||b.cat===curCat;
+    const matchQ=!q||b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q)||b.cat.includes(q);
+    return matchCat&&matchQ;
+  });
+  if(!list.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1;"><div class="ei">🔍</div>没有找到匹配的书籍</div>';return;}
+  grid.innerHTML=list.map(b=>{
+    const bd=isBorrowed(b.id);
+    return `<div class="book-card" data-id="${b.id}">
+      <div class="book-cover" style="background:${b.g};">${b.icon}</div>
+      <div class="book-info">
+        <div class="book-cat">${b.cat}</div>
+        <div class="book-title">${b.title}</div>
+        <div class="book-author">${b.author}</div>
+        <div class="book-meta">
+          <span class="book-status ${bd?'borrowed':'available'}"><span class="dot" style="background:${bd?'var(--orange)':'var(--teal)'}"></span>${bd?'借阅中':'可借阅'}</span>
+          <button class="btn-borrow" ${bd?'disabled':''} onclick="askBorrow(${b.id})">${bd?'已借阅':'借阅'}</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  bindCardHover();
+  updateStats();
+}
+function bindCardHover(){
+  document.querySelectorAll('.book-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+      card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+    });
+  });
+}
+
+// ========== 借阅逻辑 ==========
+function askBorrow(id){
+  const b=BOOKS.find(x=>x.id===id);
+  showModal('📚','确认借阅',`你确定要借阅 <strong>《${b.title}》</strong> 吗？<br>借阅期限为 30 天，请按时归还。`,()=>{
+    const due=new Date(Date.now()+30*864e5);
+    borrowed.push({id:b.id,title:b.title,icon:b.icon,g:b.g,due:`${due.getFullYear()}-${String(due.getMonth()+1).padStart(2,'0')}-${String(due.getDate()).padStart(2,'0')}`});
+    LS.set('borrowed',borrowed);
+    closeModal();renderBooks();renderBorrow();
+    toast('success','✅',`已成功借阅《${b.title}》`);
+  });
+}
+function returnBook(id){
+  const b=borrowed.find(x=>x.id===id);
+  borrowed=borrowed.filter(x=>x.id!==id);
+  LS.set('borrowed',borrowed);
+  renderBooks();renderBorrow();
+  toast('success','📥',`已归还《${b.title}》`);
+}
+function renderBorrow(){
+  const el=document.getElementById('borrowList');
+  if(!borrowed.length){el.innerHTML='<div class="empty-state" style="grid-column:1/-1;"><div class="ei">📚</div>暂无借阅，去上方书架挑选吧</div>';updateStats();return;}
+  el.innerHTML=borrowed.map(b=>`<div class="borrow-item">
+    <div class="borrow-cover" style="background:${b.g};">${b.icon}</div>
+    <div class="borrow-detail">
+      <div class="borrow-title">${b.title}</div>
+      <div class="borrow-due">应还日期：${b.due}</div>
+    </div>
+    <button class="btn-return" onclick="returnBook(${b.id})">归还</button>
+  </div>`).join('');
+  updateStats();
+}
+
+// ========== 座位逻辑 ==========
+const FLOOR_ICONS={'2F·静音区':'🤫','3F·研讨区':'👥','4F·电子阅览':'💻'};
+function renderSeats(){
+  const floor=document.getElementById('floorSelect').value;
+  const date=document.getElementById('dateSelect').value;
+  const time=document.getElementById('timeSelect').value;
+  document.getElementById('floorTitle').textContent=document.getElementById('floorSelect').selectedOptions[0].text;
+  document.getElementById('floorIcon').textContent=FLOOR_ICONS[floor]||'📚';
+  selectedSeat=null;
+  const btn=document.getElementById('bookSeatBtn');
+  btn.disabled=true;btn.textContent='请先选择一个座位';
+  const grid=document.getElementById('seatGrid');
+  let html='';
+  const TOTAL=40;
+  for(let i=0;i<TOTAL;i++){
+    const num=String(i+1).padStart(2,'0');
+    const mine=seatRes.some(s=>s.floor===floor&&s.date===date&&s.time===time&&s.seat===num);
+    let state=mine?'mine':seatStateFor(floor,date,time,i);
+    const clickable=state==='free';
+    html+=`<div class="seat ${state}" data-seat="${num}" ${clickable?`onclick="selectSeat('${num}',this)"`:''} title="座位 ${num}">${num}</div>`;
+    if((i+1)%8===0&&i!==TOTAL-1) html+='<div class="aisle" style="grid-column:1/-1;"></div>';
+  }
+  grid.innerHTML=html;
+  updateStats();
+}
+function selectSeat(num,el){
+  document.querySelectorAll('.seat.selected').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSeat=num;
+  const btn=document.getElementById('bookSeatBtn');
+  btn.disabled=false;btn.textContent=`预约座位 ${num}`;
+}
+function confirmSeat(){
+  if(!selectedSeat)return;
+  const floor=document.getElementById('floorSelect').value;
+  const date=document.getElementById('dateSelect').value;
+  const time=document.getElementById('timeSelect').value;
+  const floorTxt=document.getElementById('floorSelect').selectedOptions[0].text;
+  showModal('💺','确认预约',`确认预约 <strong>${floorTxt}</strong> 的 <strong>${selectedSeat} 号座位</strong>？<br>时间：${date} ${time}`,()=>{
+    seatRes.push({floor,date,time,seat:selectedSeat,floorTxt});
+    LS.set('seatRes',seatRes);
+    closeModal();renderSeats();renderSeatRes();
+    toast('success','✅',`已预约 ${selectedSeat} 号座位`);
+  });
+}
+function cancelSeat(idx){
+  const s=seatRes[idx];
+  seatRes.splice(idx,1);
+  LS.set('seatRes',seatRes);
+  renderSeats();renderSeatRes();
+  toast('success','🗑️',`已取消 ${s.seat} 号座位预约`);
+}
+function renderSeatRes(){
+  const el=document.getElementById('seatResList');
+  if(!seatRes.length){el.innerHTML='<div class="empty-state" style="grid-column:1/-1;"><div class="ei">💺</div>暂无座位预约</div>';updateStats();return;}
+  el.innerHTML=seatRes.map((s,i)=>`<div class="borrow-item">
+    <div class="borrow-cover" style="background:linear-gradient(120deg,#bf5af2,#ff375f);">${FLOOR_ICONS[s.floor]||'💺'}</div>
+    <div class="borrow-detail">
+      <div class="borrow-title">${s.seat} 号座位 · ${s.floorTxt||s.floor}</div>
+      <div class="borrow-due">${s.date} · ${s.time}</div>
+    </div>
+    <button class="btn-return" onclick="cancelSeat(${i})">取消</button>
+  </div>`).join('');
+  updateStats();
+}
+
+// ========== 统计 ==========
+function updateStats(){
+  animNum('statBooks',BOOKS.length);
+  const floor=document.getElementById('floorSelect').value;
+  const date=document.getElementById('dateSelect').value;
+  const time=document.getElementById('timeSelect').value;
+  let free=0;
+  for(let i=0;i<40;i++){if(seatStateFor(floor,date,time,i)==='free')free++;}
+  animNum('statSeats',free);
+  animNum('statBorrowed',borrowed.length);
+}
+function animNum(id,target){
+  const el=document.getElementById(id);if(!el)return;
+  const cur=parseInt(el.textContent)||0;
+  if(cur===target){el.textContent=target;return;}
+  const step=target>cur?1:-1;let v=cur;
+  const t=setInterval(()=>{v+=step;el.textContent=v;if(v===target)clearInterval(t);},30);
+}
+
+// ========== Modal & Toast ==========
+let modalCb=null;
+function showModal(icon,title,text,cb){
+  document.getElementById('modalIcon').textContent=icon;
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalText').innerHTML=text;
+  modalCb=cb;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
+document.getElementById('modalConfirm').onclick=()=>{if(modalCb)modalCb();};
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target.id==='modalOverlay')closeModal();});
+
+let toastT;
+function toast(type,icon,msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastIcon').textContent=icon;
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='toast show '+type;
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ========== Reveal 动画 ==========
+const revealObs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+// ========== 初始化 ==========
+renderBooks();
+renderSeats();
+renderBorrow();
+renderSeatRes();
+</script>
+
+</body>
+</html>

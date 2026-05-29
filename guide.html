@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>使用指南 · Campus Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100;300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--white:#f5f5f7;--black:#000;--blue:#0071e3;--blue-light:#2997ff;--purple:#bf5af2;--teal:#32d74b;--orange:#ff9f0a;--pink:#ff375f;--glass:rgba(255,255,255,0.06);--glass-border:rgba(255,255,255,0.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{background:#000;color:var(--white);font-family:'Noto Sans SC',-apple-system,sans-serif;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;height:52px;background:rgba(0,0,0,0.72);backdrop-filter:blur(40px) saturate(200%);-webkit-backdrop-filter:blur(40px) saturate(200%);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;padding:0 28px;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;letter-spacing:-0.5px;background:linear-gradient(135deg,#fff 0%,#a0c4ff 60%,#bf5af2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:300;letter-spacing:0.3px;transition:color .2s;}
+.nav-links a:hover{color:#fff;}
+.nav-links a.active{color:var(--blue-light);}
+
+/* HERO */
+.hero{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:140px 24px 80px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;z-index:0;}
+.hero-bg::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(41,151,255,0.25) 0%,transparent 70%);top:-150px;left:50%;transform:translateX(-50%);filter:blur(80px);animation:pulse-glow 6s ease-in-out infinite alternate;}
+.hero-bg::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(191,90,242,0.2) 0%,transparent 70%);bottom:0;right:10%;filter:blur(60px);animation:pulse-glow 8s ease-in-out infinite alternate-reverse;}
+@keyframes pulse-glow{0%{opacity:.6;transform:translateX(-50%) scale(1);}100%{opacity:1;transform:translateX(-50%) scale(1.15);}}
+.hero-eyebrow{font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--blue-light);font-weight:300;margin-bottom:20px;position:relative;z-index:1;}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(48px,8vw,96px);font-weight:700;line-height:1.05;letter-spacing:-2px;background:linear-gradient(160deg,#ffffff 0%,#c8e0ff 45%,#bf5af2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative;z-index:1;}
+.hero-sub{font-size:clamp(16px,2vw,20px);font-weight:300;color:rgba(255,255,255,0.6);margin-top:20px;max-width:600px;line-height:1.7;position:relative;z-index:1;}
+
+/* SEARCH */
+.search-wrap{position:relative;z-index:1;margin-top:40px;width:100%;max-width:560px;}
+.search-input{width:100%;padding:16px 24px 16px 52px;border-radius:16px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);color:#fff;font-size:15px;font-family:inherit;outline:none;transition:border-color .3s,box-shadow .3s;}
+.search-input::placeholder{color:rgba(255,255,255,0.35);}
+.search-input:focus{border-color:rgba(41,151,255,0.5);box-shadow:0 0 30px rgba(41,151,255,0.1);}
+.search-icon{position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.5;}
+
+/* SECTIONS */
+section{padding:100px 24px;}
+.section-inner{max-width:1100px;margin:0 auto;}
+.section-label{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--blue-light);font-weight:400;margin-bottom:16px;text-align:center;}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,52px);font-weight:700;line-height:1.1;letter-spacing:-1px;color:#fff;text-align:center;margin-bottom:14px;}
+.section-title span{background:linear-gradient(120deg,#2997ff,#bf5af2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.section-desc{font-size:16px;font-weight:300;color:rgba(255,255,255,0.5);text-align:center;max-width:600px;margin:0 auto 60px;line-height:1.7;}
+
+/* GUIDE CARDS - Liquid Glass */
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;}
+.guide-card{position:relative;padding:36px 32px;border-radius:24px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);overflow:hidden;transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .4s,box-shadow .4s;cursor:pointer;}
+.guide-card::before{content:'';position:absolute;inset:0;border-radius:24px;background:linear-gradient(135deg,rgba(255,255,255,0.08) 0%,transparent 50%,rgba(255,255,255,0.03) 100%);opacity:0;transition:opacity .4s;pointer-events:none;}
+.guide-card::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(41,151,255,0.08) 0%,transparent 50%);opacity:0;transition:opacity .4s;pointer-events:none;}
+.guide-card:hover{transform:translateY(-4px);border-color:rgba(41,151,255,0.3);box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 40px rgba(41,151,255,0.05);}
+.guide-card:hover::before,.guide-card:hover::after{opacity:1;}
+.guide-num{font-size:48px;font-weight:700;background:linear-gradient(135deg,rgba(41,151,255,0.3),rgba(191,90,242,0.3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;font-family:'Playfair Display',serif;}
+.guide-card-title{font-size:20px;font-weight:600;color:#fff;margin-bottom:10px;}
+.guide-card-desc{font-size:14px;font-weight:300;color:rgba(255,255,255,0.5);line-height:1.7;}
+.guide-card-icon{position:absolute;top:28px;right:28px;font-size:28px;opacity:.6;}
+
+/* STEP DETAIL */
+.step-section{padding:80px 24px;border-top:1px solid rgba(255,255,255,0.04);}
+.step-inner{max-width:900px;margin:0 auto;}
+.step-header{display:flex;align-items:center;gap:20px;margin-bottom:32px;}
+.step-badge{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--g1,#2997ff),var(--g2,#bf5af2));flex-shrink:0;}
+.step-title{font-size:clamp(24px,3.5vw,36px);font-weight:600;color:#fff;}
+.step-content{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+.step-text{font-size:15px;font-weight:300;color:rgba(255,255,255,0.6);line-height:1.9;}
+.step-text strong{color:var(--blue-light);font-weight:500;}
+.step-demo{border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:24px;backdrop-filter:blur(12px);}
+.step-demo-bar{display:flex;gap:6px;margin-bottom:16px;}
+.step-demo-dot{width:10px;height:10px;border-radius:50%;}
+.step-demo-content{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.8;font-family:'SF Mono',monospace;}
+.step-demo-content .hl{color:var(--blue-light);}
+
+/* TIPS */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:48px;}
+.tip-card{padding:24px;border-radius:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(12px);transition:border-color .3s;}
+.tip-card:hover{border-color:rgba(50,215,75,0.3);}
+.tip-icon{font-size:24px;margin-bottom:12px;}
+.tip-title{font-size:15px;font-weight:500;color:#fff;margin-bottom:6px;}
+.tip-desc{font-size:13px;font-weight:300;color:rgba(255,255,255,0.45);line-height:1.6;}
+
+/* FOOTER */
+footer{padding:60px 24px 40px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;}
+.footer-text{font-size:13px;color:rgba(255,255,255,0.3);font-weight:300;}
+.footer-text a{color:var(--blue-light);text-decoration:none;}
+
+/* REVEAL ANIMATION */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .step-content{grid-template-columns:1fr;}
+  .guide-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index (1).html" class="nav-logo">Campus Intelligence</a>
+  <ul class="nav-links">
+    <li><a href="index (1).html">首页</a></li>
+    <li><a href="guide.html" class="active">使用指南</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li><a href="library.html">图书馆</a></li>
+    <li><a href="academics.html">学术活动</a></li>
+    <li><a href="mentors.html">导师团队</a></li>
+  </ul>
+  <a href="index (1).html" style="font-size:13px;color:var(--blue-light);text-decoration:none;">← 返回首页</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-eyebrow">User Guide</div>
+  <h1 class="hero-title">使用指南</h1>
+  <p class="hero-sub">从零开始，快速掌握 Campus Intelligence 的全部能力。跟随以下步骤，解锁你的 AI 校园助手。</p>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" placeholder="搜索指南内容…" id="guideSearch" oninput="filterGuide(this.value)">
+  </div>
+</section>
+
+<!-- QUICK START CARDS -->
+<section>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Quick Start</div>
+      <h2 class="section-title">快速开始<span>四步上手</span></h2>
+      <p class="section-desc">无需复杂配置，几分钟即可开始使用 AI 助手提升你的学习效率。</p>
+    </div>
+    <div class="guide-grid reveal">
+      <div class="guide-card" data-guide>
+        <div class="guide-num">01</div>
+        <div class="guide-card-title">注册账号</div>
+        <div class="guide-card-desc">使用学号或校园邮箱注册，支持校园卡、微信一键登录。验证身份后即可使用全部功能。</div>
+        <div class="guide-card-icon">🎓</div>
+      </div>
+      <div class="guide-card" data-guide>
+        <div class="guide-num">02</div>
+        <div class="guide-card-title">开始对话</div>
+        <div class="guide-card-desc">点击右下角 AI 助手按钮，输入你的问题。支持学术问答、代码调试、写作辅助等多种场景。</div>
+        <div class="guide-card-icon">💬</div>
+      </div>
+      <div class="guide-card" data-guide>
+        <div class="guide-num">03</div>
+        <div class="guide-card-title">探索工具</div>
+        <div class="guide-card-desc">写作助手、创意设计、学习规划——在功能面板中选择专属工具，获得更精准的 AI 辅助。</div>
+        <div class="guide-card-icon">🛠️</div>
+      </div>
+      <div class="guide-card" data-guide>
+        <div class="guide-num">04</div>
+        <div class="guide-card-title">个性化设置</div>
+        <div class="guide-card-desc">在设置中配置你的专业方向、学习偏好与通知频率，让 AI 更懂你的需求。</div>
+        <div class="guide-card-icon">⚙️</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DETAILED STEPS -->
+<div class="step-section reveal" data-step>
+  <div class="step-inner">
+    <div class="step-header">
+      <div class="step-badge" style="--g1:#2997ff;--g2:#64d2ff;">1</div>
+      <h3 class="step-title">AI 对话 · 智能问答</h3>
+    </div>
+    <div class="step-content">
+      <div class="step-text">
+        Campus Intelligence 由 <strong>ChatGPT</strong> 驱动，支持多轮上下文对话。你可以：<br><br>
+        • 提出学术问题，获得详细解答<br>
+        • 上传代码片段，获取调试建议<br>
+        • 讨论设计方案，获得创意灵感<br>
+        • 规划学习路径，制定复习计划<br><br>
+        <strong>提示：</strong>问题越具体，AI 的回答越精准。尝试提供背景信息和具体需求。
+      </div>
+      <div class="step-demo">
+        <div class="step-demo-bar">
+          <div class="step-demo-dot" style="background:#ff5f57;"></div>
+          <div class="step-demo-dot" style="background:#febc2e;"></div>
+          <div class="step-demo-dot" style="background:#28c840;"></div>
+        </div>
+        <div class="step-demo-content">
+          <span class="hl">You:</span> 帮我解释一下 Python 中装饰器的工作原理<br><br>
+          <span class="hl">AI:</span> 装饰器本质上是一个高阶函数，它接收一个函数作为参数，返回一个新的函数...<br><br>
+          <span class="hl">You:</span> 能给我一个实际应用的例子吗？<br><br>
+          <span class="hl">AI:</span> 当然！比如一个计时装饰器...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-section reveal" data-step>
+  <div class="step-inner">
+    <div class="step-header">
+      <div class="step-badge" style="--g1:#bf5af2;--g2:#ff375f;">2</div>
+      <h3 class="step-title">写作助手 · 学术增强</h3>
+    </div>
+    <div class="step-content">
+      <div class="step-text">
+        专为学术写作设计的 AI 工具，帮助你：<br><br>
+        • <strong>论文润色</strong> — 优化表达、修正语法、提升学术性<br>
+        • <strong>摘要生成</strong> — 一键生成符合规范的中英文摘要<br>
+        • <strong>引用格式</strong> — 自动转换 APA / MLA / GB/T 7714<br>
+        • <strong>查重预检</strong> — 提交前检测相似度，提升原创性<br>
+        • <strong>大纲规划</strong> — 根据主题生成论文结构建议<br><br>
+        在编辑器中选中文本，点击 ✨ 按钮即可调用 AI 增强。
+      </div>
+      <div class="step-demo">
+        <div class="step-demo-bar">
+          <div class="step-demo-dot" style="background:#ff5f57;"></div>
+          <div class="step-demo-dot" style="background:#febc2e;"></div>
+          <div class="step-demo-dot" style="background:#28c840;"></div>
+        </div>
+        <div class="step-demo-content">
+          <span class="hl">[原文]</span><br>
+          这个研究很重要因为它解决了一个问题<br><br>
+          <span class="hl">[AI 优化]</span><br>
+          本研究具有重要的理论与实践意义，其核心贡献在于系统性地解决了...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-section reveal" data-step>
+  <div class="step-inner">
+    <div class="step-header">
+      <div class="step-badge" style="--g1:#32d74b;--g2:#64d2ff;">3</div>
+      <h3 class="step-title">代码助手 · 编程伙伴</h3>
+    </div>
+    <div class="step-content">
+      <div class="step-text">
+        支持 <strong>Python、JavaScript、Java、C++</strong> 等主流语言：<br><br>
+        • 粘贴代码，AI 自动识别语言并分析<br>
+        • 逐行解释复杂算法逻辑<br>
+        • 发现潜在 bug 并提供修复方案<br>
+        • 推荐最佳实践与性能优化建议<br>
+        • 生成单元测试代码<br><br>
+        <strong>VS Code 集成：</strong>安装 Campus Intelligence 插件，在编辑器内直接调用 AI。
+      </div>
+      <div class="step-demo">
+        <div class="step-demo-bar">
+          <div class="step-demo-dot" style="background:#ff5f57;"></div>
+          <div class="step-demo-dot" style="background:#febc2e;"></div>
+          <div class="step-demo-dot" style="background:#28c840;"></div>
+        </div>
+        <div class="step-demo-content">
+          <span class="hl">def</span> fibonacci(n):<br>
+          &nbsp;&nbsp;<span class="hl">if</span> n <= 1: <span class="hl">return</span> n<br>
+          &nbsp;&nbsp;<span class="hl">return</span> fibonacci(n-1) + fibonacci(n-2)<br><br>
+          <span style="color:#32d74b;">💡 AI 建议：使用记忆化优化递归，避免指数级时间复杂度</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-section reveal" data-step>
+  <div class="step-inner">
+    <div class="step-header">
+      <div class="step-badge" style="--g1:#ff9f0a;--g2:#ff375f;">4</div>
+      <h3 class="step-title">学习规划 · 智能日程</h3>
+    </div>
+    <div class="step-content">
+      <div class="step-text">
+        与教务系统联动，AI 为你量身定制学习计划：<br><br>
+        • <strong>课程同步</strong> — 自动导入课程表与考试安排<br>
+        • <strong>智能提醒</strong> — 作业截止、考试倒计时推送<br>
+        • <strong>复习规划</strong> — 基于艾宾浩斯遗忘曲线安排复习<br>
+        • <strong>薄弱分析</strong> — 识别知识盲区，推荐学习资源<br>
+        • <strong>时间管理</strong> — 番茄钟 + 专注统计<br><br>
+        在设置中绑定教务账号，即可自动同步所有课程信息。
+      </div>
+      <div class="step-demo">
+        <div class="step-demo-bar">
+          <div class="step-demo-dot" style="background:#ff5f57;"></div>
+          <div class="step-demo-dot" style="background:#febc2e;"></div>
+          <div class="step-demo-dot" style="background:#28c840;"></div>
+        </div>
+        <div class="step-demo-content">
+          <span class="hl">📅 今日学习计划</span><br><br>
+          09:00 - 10:30 &nbsp; 高等数学复习<br>
+          14:00 - 15:30 &nbsp; Python 项目实践<br>
+          16:00 - 17:00 &nbsp; UI 设计作业<br>
+          20:00 - 21:00 &nbsp; 英语听力训练<br><br>
+          <span style="color:#ff9f0a;">⚡ 建议：数学薄弱章节建议增加 30 分钟</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TIPS SECTION -->
+<section>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Pro Tips</div>
+      <h2 class="section-title">高效使用<span>小技巧</span></h2>
+    </div>
+    <div class="tips-grid reveal">
+      <div class="tip-card">
+        <div class="tip-icon">🎯</div>
+        <div class="tip-title">提问要具体</div>
+        <div class="tip-desc">越具体的问题，AI 回答越精准。提供背景、约束条件和期望格式。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🔄</div>
+        <div class="tip-title">多轮追问</div>
+        <div class="tip-desc">AI 支持上下文记忆，可以在同一对话中不断深入追问。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📎</div>
+        <div class="tip-title">善用附件</div>
+        <div class="tip-desc">支持上传图片、文档、代码文件，AI 可以直接分析内容。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">⌨️</div>
+        <div class="tip-title">快捷键</div>
+        <div class="tip-desc">Ctrl+K 快速唤起 AI，Ctrl+Shift+A 切换工具面板。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📚</div>
+        <div class="tip-title">收藏对话</div>
+        <div class="tip-desc">点击星标收藏有价值的对话，方便日后复习查阅。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🌙</div>
+        <div class="tip-title">深色模式</div>
+        <div class="tip-desc">默认深色主题保护视力，也可在设置中切换浅色模式。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-text">
+    <a href="index (1).html">Campus Intelligence</a> · 大连工业大学艺术与信息工程学院<br>
+    <span style="margin-top:8px;display:inline-block;">© 2026 保留所有权利 · <a href="privacy.html">隐私政策</a> · <a href="faq.html">常见问题</a></span>
+  </p>
+</footer>
+
+<script>
+// Reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold: 0.1});
+reveals.forEach(el => revealObs.observe(el));
+
+// Card mouse tracking for liquid glass effect
+document.querySelectorAll('.guide-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100);
+    const y = ((e.clientY - rect.top) / rect.height * 100);
+    card.style.setProperty('--mx', x + '%');
+    card.style.setProperty('--my', y + '%');
+  });
+});
+
+// Search filter
+function filterGuide(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('[data-guide],[data-step]').forEach(el => {
+    const text = el.textContent.toLowerCase();
+    el.style.display = text.includes(q) || q === '' ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
